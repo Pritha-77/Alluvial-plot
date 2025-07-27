@@ -1,0 +1,61 @@
+setwd ("d:/NGS_Data_Analysis")
+
+
+library(readxl)
+library(stringr)
+library(writexl)
+library(ggplot2)
+library(ggalluvial)
+library(dplyr)
+
+# Assuming 'data' has columns 'gene' and 'miRNA'
+
+data <- read_excel("list4.xlsx")
+data$gene <- as.factor(data$gene)
+data$miRNA <- as.factor(data$miRNA)
+
+# Identify the top 50 most frequent miRNAs
+top_miRNAs <- data %>%
+  count(miRNA, sort = TRUE) %>%
+  slice_max(n, n = 50, with_ties = FALSE) %>%
+  pull(miRNA)
+
+
+# Filter the data to include only these top miRNAs
+filtered_data <- data %>%
+  filter(miRNA %in% top_miRNAs)
+
+# Create the alluvial plot with filtered data
+ggplot(data = filtered_data,
+       aes(axis1 = gene, axis2 = miRNA)) +
+  geom_alluvium(aes(fill = gene)) +
+  geom_stratum() +
+  geom_text(stat = "stratum", 
+            aes(label = after_stat(stratum)), 
+            size = 3.5, 
+            angle = 0, 
+            hjust = 0.5) +
+  scale_x_discrete(limits = c("Gene", "miRNA"),
+                   expand = c(0.25, 0.08)) +
+  scale_fill_viridis_d() +
+  theme_void()
+
+# Optional: Save the plot with larger dimensions for better readability
+ggsave("alluvial_plot.pdf", width = 16, height = 20)
+
+ggplot(data = data,
+       aes(axis1 = gene, axis2 = trait)) +
+  geom_alluvium(aes(fill = gene)) +
+  geom_stratum() +
+  geom_text(stat = "stratum", 
+            aes(label = after_stat(stratum)), 
+            size = 2.5, 
+            angle = 0, 
+            hjust = 0.5) +
+  scale_x_discrete(limits = c("Gene", "trait"),
+                   expand = c(0.15, 0.05)) +
+  scale_fill_viridis_d() +
+  theme_void()
+
+# Optional: Save the plot with larger dimensions for better readability
+ggsave("alluvial_plot.png", width = 20, height = 40)
