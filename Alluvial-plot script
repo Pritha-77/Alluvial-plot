@@ -40,22 +40,6 @@ ggplot(data = filtered_data,
   scale_fill_viridis_d() +
   theme_void()
 
-# Optional: Save the plot with larger dimensions for better readability
 ggsave("alluvial_plot.pdf", width = 16, height = 20)
 
-ggplot(data = data,
-       aes(axis1 = gene, axis2 = trait)) +
-  geom_alluvium(aes(fill = gene)) +
-  geom_stratum() +
-  geom_text(stat = "stratum", 
-            aes(label = after_stat(stratum)), 
-            size = 2.5, 
-            angle = 0, 
-            hjust = 0.5) +
-  scale_x_discrete(limits = c("Gene", "trait"),
-                   expand = c(0.15, 0.05)) +
-  scale_fill_viridis_d() +
-  theme_void()
 
-# Optional: Save the plot with larger dimensions for better readability
-ggsave("alluvial_plot.png", width = 20, height = 40)
